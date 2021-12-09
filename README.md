@@ -3,13 +3,14 @@ A library for processing ASCII representations of QR Codes.
 
 This is intended to be used for CTFs, but may be used by anyone.
 
-## Install
+## Setup
 ```bash
-pip install qrtogo
+git clone git@github.com:MasterAge/qrtogo.git
+cd qrtogo
+pip install -r requirements.txt qrtogo
 ```
 
 ## Usage
-### Command line
 ```bash
-python -m qrtogo <file>
+python qrtogo.py <file>
 ```

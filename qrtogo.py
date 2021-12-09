@@ -44,7 +44,7 @@ def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(prog="QRToGo", description='Processes ASCII QR Codes.')
     parser.add_argument('-w', '--width', type=int, required=True,
                         help='The width of the QR code, including the whitespace.')
-    parser.add_argument('-b', '--blackchar', type=str, default='1',
+    parser.add_argument('-b', '--black', type=str, default='1',
                         help='The character that represents the black squares')
     parser.add_argument('-v', '--verbose', action='store_true', default=False,
                         help='Enable verbose logging.')
@@ -56,11 +56,10 @@ def _parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def parse_ascii_qrcode(file: str, width: int, blackchar: str, dump_qr_code: bool) -> str:
+def parse_ascii_qrcode(file: str, width: int, black: str, dump_qr_code: bool) -> str:
     qrcode_chars = read_file(file, width)
-    img = to_image(qrcode_chars, blackchar)
+    img = to_image(qrcode_chars, black)
 
-    import pdb; pdb.set_trace()
     if dump_qr_code:
         filename = file.split(".")[0] + ".png"
         img.save(filename, 'PNG')
@@ -73,5 +72,5 @@ if __name__ == '__main__':
     args = _parse_args()
     logging.getLogger().setLevel(logging.INFO if args.verbose else logging.WARNING)
 
-    data = parse_ascii_qrcode(args.file, args.width, args.blackchar, args.dump_qr_code)
+    data = parse_ascii_qrcode(args.file, args.width, args.black, args.dump_qr_code)
     print(f"Data from qr code: \n{data}\n")
