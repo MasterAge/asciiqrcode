@@ -7,8 +7,6 @@ import math
 from PIL import Image
 from pyzbar.pyzbar import decode
 
-MIN_QR_CODE_WIDTH = 21
-
 
 def _to_image(qrcode: list, black_char: str) -> Image:
     """
@@ -90,7 +88,7 @@ def _get_chars(qrcode_chars: list) -> list:
     raise RuntimeError("ASCII QR code only uses one character, unable to decode.")
 
 
-def parse_ascii_qrcode(file: str, dump_qr_code: bool) -> str:
+def parse_ascii_qrcode(file: str, dump_qr_code: bool = False) -> str:
     """
     Retrieves the data from an ASCII QR code.
     :param file: The filename to read from.
@@ -125,10 +123,18 @@ def _parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-if __name__ == '__main__':
+def _main():
+    """
+    Separate main function to avoid polluting the main scope.
+    :return:
+    """
     args = _parse_args()
     logging.getLogger().setLevel(logging.INFO if args.verbose else logging.WARNING)
 
     data = parse_ascii_qrcode(args.file, args.dump_qr_code)
     print(f"Data from qr code: \n{data}\n")
     exit(0)
+
+
+if __name__ == '__main__':
+    _main()
