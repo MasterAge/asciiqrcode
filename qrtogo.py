@@ -3,6 +3,7 @@
 import argparse
 import logging
 import math
+import sys
 
 from PIL import Image
 from pyzbar.pyzbar import decode
@@ -113,12 +114,17 @@ def _parse_args() -> argparse.Namespace:
     Creates an arg parser for QRToGo and parses the supplied args.
     :return: The parsed args.
     """
-    parser = argparse.ArgumentParser(prog="QRToGo", description='Processes ASCII QR Codes.')
+    parser = argparse.ArgumentParser(description='Processes ASCII QR Codes.')
     parser.add_argument('-v', '--verbose', action='store_true', default=False,
                         help='Enable verbose logging.')
     parser.add_argument('--dump-qr-code', action='store_true', default=False,
                         help='Write the created QR code image to disc.')
     parser.add_argument('file', type=str, help='A file containing an ASCII QR code.')
+
+    # Print help when no args are supplied
+    if len(sys.argv) == 1:
+        parser.print_help(sys.stderr)
+        exit(1)
 
     return parser.parse_args()
 
