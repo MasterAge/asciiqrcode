@@ -2,11 +2,15 @@
 
 import argparse
 import logging
+import math
+
 from PIL import Image
 from pyzbar.pyzbar import decode
 
+MIN_QR_CODE_WIDTH = 21
 
-def to_image(qrcode: list, black_char: str) -> Image:
+
+def _to_image(qrcode: list, black_char: str) -> Image:
     """
     Converts an ASCII QR code list to a RGB image.
     :param qrcode: The ASCII QR code.
@@ -21,23 +25,40 @@ def to_image(qrcode: list, black_char: str) -> Image:
             if qrcode[y][x] == black_char:
                 pixels[y, x] = (0, 0, 0)
 
+    img = img.resize((img.width * 2, img.height * 2))
+
     return img
 
 
-def read_file(file, width) -> list:
+def _calculate_width(num_chars: int) -> int:
+    """
+    Calculates the width of the qr code for decoding.
+    :param num_chars: The length of the ASCII QR code.
+    :return: The width of the QR code.
+    """
+    # QR Codes are perfect squares, so calculating the square root will find the width.
+    square_factor = math.sqrt(num_chars)
+
+    if square_factor.is_integer():
+        return int(square_factor)
+
+    raise RuntimeError("No width was found for the QR code, are there trailing characters?")
+
+
+def _read_file(file) -> list:
     """
     Reads an ASCII QR code file into a list of lines.
     :param file: The filename to read from.
-    :param width: The width of the QR code in pixels.
     :return: A list of lines.
     """
     with open(file) as f:
         qrcode = f.readlines()
 
-    # If the qr code is not already broken up.
-    if len(qrcode[0]) != width:
+    # If the qr code is not broken up.
+    if len(qrcode) == 1:
         # Strip all newlines.
         contents = "".join([line.strip() for line in qrcode])
+        width = _calculate_width(len(contents))
 
         if len(contents) % width != 0:
             raise RuntimeError(f"QR code has characters left over after dividing by width ({width}).")
@@ -54,24 +75,39 @@ def read_file(file, width) -> list:
     return qrcode
 
 
-def parse_ascii_qrcode(file: str, width: int, black: str, dump_qr_code: bool) -> str:
+def _get_chars(qrcode_chars: list) -> list:
+    """
+    Retrieves the set of characters that make up the QR code.
+    :param qrcode_chars: The ASCII QR code.
+    :return: A list of the unique QR code characters.
+    """
+    first_char = qrcode_chars[0][0]
+    for line in qrcode_chars:
+        for c in line:
+            if c != first_char:
+                return [first_char, c]
+
+    raise RuntimeError("ASCII QR code only uses one character, unable to decode.")
+
+
+def parse_ascii_qrcode(file: str, dump_qr_code: bool) -> str:
     """
     Retrieves the data from an ASCII QR code.
     :param file: The filename to read from.
-    :param width: The width of the QR code in pixels.
-    :param black: The character in the ASCII QR code that represents the black squares.
     :param dump_qr_code: Whether to write the QR code image to disk.
     :return: The data stored in the QR code.
     """
-    qrcode_chars = read_file(file, width)
-    img = to_image(qrcode_chars, black)
+    qrcode_chars = _read_file(file)
+    for c in _get_chars(qrcode_chars):
+        img = _to_image(qrcode_chars, c)
+        decoded_qr_code = decode(img)
+        if decoded_qr_code:
+            if dump_qr_code:
+                filename = file.rsplit(".", 1)[0] + ".png"
+                img.save(filename, 'PNG')
+                logging.info(f"Wrote QR code to {filename}")
 
-    if dump_qr_code:
-        filename = file.split(".")[0] + ".png"
-        img.save(filename, 'PNG')
-        logging.info(f"Wrote QR code to {filename}")
-
-    return str(decode(img)[0].data, "utf-8")
+            return str(decoded_qr_code[0].data, "utf-8")
 
 
 def _parse_args() -> argparse.Namespace:
@@ -80,16 +116,11 @@ def _parse_args() -> argparse.Namespace:
     :return: The parsed args.
     """
     parser = argparse.ArgumentParser(prog="QRToGo", description='Processes ASCII QR Codes.')
-    parser.add_argument('-w', '--width', type=int, required=True,
-                        help='The width of the QR code, including the whitespace.')
-    parser.add_argument('-b', '--black', type=str, default='1',
-                        help='The character that represents the black squares')
     parser.add_argument('-v', '--verbose', action='store_true', default=False,
                         help='Enable verbose logging.')
     parser.add_argument('--dump-qr-code', action='store_true', default=False,
                         help='Write the created QR code image to disc.')
-    parser.add_argument('file', type=str,
-                        help='A file containing an ASCII QR code.')
+    parser.add_argument('file', type=str, help='A file containing an ASCII QR code.')
 
     return parser.parse_args()
 
@@ -98,5 +129,6 @@ if __name__ == '__main__':
     args = _parse_args()
     logging.getLogger().setLevel(logging.INFO if args.verbose else logging.WARNING)
 
-    data = parse_ascii_qrcode(args.file, args.width, args.black, args.dump_qr_code)
+    data = parse_ascii_qrcode(args.file, args.dump_qr_code)
     print(f"Data from qr code: \n{data}\n")
+    exit(0)
