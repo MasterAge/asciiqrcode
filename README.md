@@ -1,18 +1,18 @@
-# QRToGo
+# AsciiQrCode
 A library for processing ASCII representations of QR Codes.
 
 This is intended to be used for CTFs, but may be used by anyone.
 
 ## Setup
 ```bash
-git clone git@github.com:MasterAge/qrtogo.git
-cd qrtogo
-pip install -r requirements.txt qrtogo
+git clone git@github.com:MasterAge/asciiqrcode.git
+cd asciiqrcode
+pip install -r requirements.txt
 ```
 
 ## Usage
 ```bash
-usage: qrtogo.py [-h] [-v] [--dump-qr-code] file
+usage: asciiqrcode.py [-h] [-v] [--dump-qr-code] file
 
 Processes ASCII QR Codes.
 

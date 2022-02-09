@@ -111,7 +111,7 @@ def parse_ascii_qrcode(file: str, dump_qr_code: bool = False) -> str:
 
 def _parse_args() -> argparse.Namespace:
     """
-    Creates an arg parser for QRToGo and parses the supplied args.
+    Creates an arg parser for AsciiQrCode and parses the supplied args.
     :return: The parsed args.
     """
     parser = argparse.ArgumentParser(description='Processes ASCII QR Codes.')
@@ -121,7 +121,7 @@ def _parse_args() -> argparse.Namespace:
                         help='Write the created QR code image to disc.')
     parser.add_argument('file', type=str, help='A file containing an ASCII QR code.')
 
-    # Print help when no args are supplied
+    # Print help when no args are supplied.
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
         exit(1)

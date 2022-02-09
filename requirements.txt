@@ -1,3 +1,4 @@
 pyzbar
 pillow
 parameterized
+coverage
