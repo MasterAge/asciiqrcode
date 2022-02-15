@@ -13,6 +13,7 @@ setup(
   download_url='https://github.com/MasterAge/asciiqrcode/releases/download/v1.0/asciiqrcode-1.0.tar.gz',
   keywords=['ASCII', 'QR', 'QRCODE', 'CTF', 'MISC'],
   scripts=['asciiqrcode/asciiqrcode.py'],
+  # This should mirror requirements.txt
   install_requires=[
     'pyzbar',
     'pillow',
