@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import argparse
 import logging
@@ -78,7 +78,7 @@ def _get_chars(qrcode_chars: list) -> list:
     """
     Retrieves the set of characters that make up the QR code.
     :param qrcode_chars: The ASCII QR code.
-    :return: A list of the unique QR code characters.
+    :return: A list of two QR code characters.
     """
     first_char = qrcode_chars[0][0]
     for line in qrcode_chars:
@@ -97,6 +97,8 @@ def parse_ascii_qrcode(file: str, dump_qr_code: bool = False) -> str:
     :return: The data stored in the QR code.
     """
     qrcode_chars = _read_file(file)
+
+    # Loop through the QR code characters to find the black character.
     for c in _get_chars(qrcode_chars):
         img = _to_image(qrcode_chars, c)
         decoded_qr_code = decode(img)

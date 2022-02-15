@@ -2,3 +2,4 @@
 *.png
 MANIFEST
 asciiqrcode/__pycache__
+dist
