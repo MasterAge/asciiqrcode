@@ -1,0 +1,9 @@
+-r requirements.txt
+# Test dependencies
+parameterized
+coverage
+
+# Packaging dependencies
+wheel
+setuptools
+twine
