@@ -1,2 +1,4 @@
 .idea
 *.png
+MANIFEST
+asciiqrcode/__pycache__

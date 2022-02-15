@@ -1,12 +1,18 @@
 # AsciiQrCode
 A library for processing ASCII representations of QR Codes.
 
-This is intended to be used for CTFs, but may be used by anyone.
+AsciiQrCode was primarily built for CTFs.
 
 ## Setup
 ```bash
-git clone git@github.com:MasterAge/asciiqrcode.git
-cd asciiqrcode
+pip install asciiqrcode
+```
+
+or
+
+```bash
+git clone git@github.com:MasterAge/AsciiQrCode.git
+cd AsciiQrCode
 pip install -r requirements.txt
 ```
 

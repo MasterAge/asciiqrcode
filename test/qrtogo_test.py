@@ -3,7 +3,7 @@ import unittest
 
 from parameterized import parameterized
 
-import asciiqrcode
+from asciiqrcode import asciiqrcode
 
 
 class MyTestCase(unittest.TestCase):
